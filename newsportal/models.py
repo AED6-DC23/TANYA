@@ -1,32 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models import Sum
-from django.db.models.functions import Coalesce
+#from django.db.models import Sum
+#from django.db.models.functions import Coalesce
 from django.urls import reverse
 from django.core.cache import cache
 from django.contrib.postgres.fields import ArrayField
-from django_resized import ResizedImageField
-
-
-class Author(models.Model):
-    authorUser = models.OneToOneField(User, on_delete=models.CASCADE)
-    ratingAuthor = models.IntegerField(default=0)
-
-    def __str__(self):
-        return self.authorUser.username
-
-
-class Category(models.Model):
-    name = models.CharField(max_length=64, unique=True)
-
-    def __str__(self):
-        return self.name
+#from django_resized import ResizedImageField
 
 
 
-class Post(models.Model):
-    author = models.ForeignKey(Author, on_delete=models.CASCADE, verbose_name="Автор")
-
+class Post(models.Model): 
     Tank = 'TK'
     Hil = 'AR'
     DD = 'DD'
@@ -49,22 +32,18 @@ class Post(models.Model):
         (Zelevar, 'Зельевар'),
         (MasterZakinanii, 'Мастер Заклинаний'),
     )
-    categoryType = models.CharField(max_length=2, choices=CATEGORY_CHOICES, default=Torgovci,
-                                    verbose_name="Чей ты воин")
-    dateCreation = models.DateTimeField(auto_now_add=True, verbose_name='Дата статьи')
-    title = models.CharField(max_length=128, verbose_name="Поиск по названию статьи")
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    nameCat = models.CharField(max_length=64, unique=False, choices=CATEGORY_CHOICES, verbose_name='Category', default='Tanks')
+    title = models.CharField(max_length=128)
     text = models.TextField()
-    rating = models.SmallIntegerField(default=0)
-    files = models.FileField(upload_to='uploads/', blank=True, verbose_name="Загрузи файл")
+    files = models.FileField(upload_to='uploads/', blank=True)
+    dateMsg = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
         return self.title.title()
 
-    def preview(self):
-        return self.text[0:123] + '...'
-
     def get_absolute_url(self):
-        return reverse('post_detail', kwargs={'pk': self.pk})
+        return reverse('post_list')
 
 
     class Meta:
@@ -77,12 +56,13 @@ class Post(models.Model):
 
 class Comment(models.Model):
     author = models.ForeignKey(User, unique=False, on_delete=models.CASCADE)
-    message = models.ForeignKey(Post, unique=False, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, unique=False, on_delete=models.CASCADE)
     text = models.TextField()
+    status = models.BooleanField(default=False)
     dateComm = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
-        return f'{self.author}:{self.message}:{self.text[:10]}'
+        return f'{self.author}:{self.post}:{self.text[:10]}'
 
     def get_absolute_url(self):
-        return reverse('comm')
+        return reverse('Comments', args=[str(self.post.id)])

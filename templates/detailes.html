@@ -1,0 +1,26 @@
+{% extends 'default.html' %}
+
+{% block title %}
+{{ Post.title }}
+{% endblock title %}
+
+
+{% block content %}
+<td>{{ Post.nameCat }}</td>
+<hr>
+<td>{{ Post.title }}</td>
+<hr>
+<td>{{ Post.text }}</td>
+<hr>
+<td>{{ Post.author.username }}</td>
+<hr>
+<td>
+    {% if Post.files %}
+    <img src="{{ Post.files.url }}">
+    {% endif %}
+</td>
+<td>
+    <a href="{% url 'Comments' pk=comments.id %}"><button>Comments</button></a>
+    <a href="{% url 'addcomm' pk=addcomment.id %}"><button>Add comments</button></a>
+</td>
+{% endblock content %}

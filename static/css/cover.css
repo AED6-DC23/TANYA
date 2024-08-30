@@ -247,6 +247,7 @@ sup {
 a {
   color: var(--bs-link-color);
   text-decoration: underline;
+  align-items: center;
 }
 a:hover {
   color: var(--bs-link-hover-color);
@@ -7672,6 +7673,7 @@ textarea.form-control-lg {
 
 .mb-auto {
   margin-bottom: auto !important;
+  display: flex;
 }
 
 .ms-0 {
@@ -10823,4 +10825,8 @@ textarea.form-control-lg {
   .d-print-none {
     display: none !important;
   }
+}
+
+span {
+  color: red;
 }
